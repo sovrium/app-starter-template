@@ -1,5 +1,6 @@
-# sovrium-library: block/drawer-record@0.30.0
-name: drawer-record
+# sovrium-library: block/record-sheet@0.37.0
+# sovrium-library-params: childLabel=Tasks&childTable=tasks&emptyMessage=No%20record%20yet.%20Create%20one%20to%20see%20it%20here.&fullPagePath=%2Fprojects%2F%24record.id&headline=Projects&parentField=project&statusField=status&table=projects&titleField=title
+name: record-sheet
 type: container
 element: section
 props:
@@ -17,24 +18,24 @@ children:
             element: h3
             props:
               className: text-xl font-semibold text-foreground text-lg
-            content: 'Projects'
+            content: Projects
       - type: table
         dataSource:
           table: projects
         columns:
           - field: title
-            label: 'Name'
+            label: Name
             editable: false
           - field: status
-            label: 'Status'
+            label: Status
             editable: false
         onRowClick:
-          action: openDrawer
-          component: drawer-record-detail
+          action: openSheet
+          component: record-sheet-detail
         phoneLayout: rows
         emptyMessage: No record yet. Create one to see it here.
-      - type: drawer
-        id: drawer-record-detail
+      - type: sheet
+        id: record-sheet-detail
         props:
           title: $record.title
         drawerSide: right
@@ -45,12 +46,12 @@ children:
         recordFields:
           - name: title
             type: single-line-text
-            label: 'Name'
+            label: Name
           - name: status
             type: status
-            label: 'Status'
+            label: Status
         related:
-          - label: 'Tasks'
+          - label: Tasks
             table: tasks
             field: project
             limit: 3
