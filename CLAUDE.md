@@ -13,7 +13,8 @@ a list of projects that each open in a side panel and on their own page.
   other application block in its stock copy
 - **Library blocks** (60) — every application block: under `library/block/`, each starting with a
   `sovrium-library:` line naming the entry and version it was installed from
-- **Forms** (2): the worklist's "New" dialog and the project page's "Add a task"
+- **Forms** (5): the worklist's "New" dialog, the project page's "Add a task", and the
+  drawer, modal and two-column forms the `/kit/data` page shows
 - **Singletons**: auth
 - **Seed data**: `seed/` — one file per table plus `users.yaml` (three sign-in accounts,
   one per role), dated relative to the day you seed. `sovrium start` does not seed: run
@@ -60,10 +61,23 @@ sovrium schema                 # The full JSON Schema of this binary
 ```
 
 **Agent skills.** `.claude/skills/` holds the skills written by `sovrium skills` for the
-version in this project: start from `sovrium-app` for any change to the config. After
-upgrading Sovrium, run `sovrium skills` again to refresh them — a file you edited is kept
-unless you pass `--force`. For Codex, Copilot, Gemini CLI or OpenCode, run
-`sovrium skills --target agents` to write them to `.agents/skills/` as well.
+version in this project: start from `sovrium-app` for any change to the config. Beside it
+sit the specialists: `sovrium-data-model` (tables, fields, permissions), `sovrium-pages`,
+`sovrium-design`, `sovrium-automations`, `sovrium-security`, `sovrium-performance`,
+`sovrium-seo-geo` (SEO and AI search) and `sovrium-agents` (AI agents), plus
+`sovrium-report-issue` for filing a bug against Sovrium itself. After upgrading Sovrium,
+run `sovrium skills` again to refresh them — a file you edited is kept unless you pass
+`--force`. For Codex, Copilot, Gemini CLI or OpenCode, run `sovrium skills --target agents`
+to write them to `.agents/skills/` as well.
+
+**Config editor agent.** `.claude/agents/sovrium-config-editor.md` is a Claude Code subagent,
+written by the same `sovrium skills` (and by `sovrium init`) from the same source as the
+skills. Delegate a config change to it: it keeps `sovrium dev` running, and it reports a
+change done only once the `status.json` that `sovrium dev` points at shows the reload and
+the app behaves in the browser. It runs on your session's model (`model: inherit`). For one
+small, fast edit, ask Claude Code to run it on Haiku for that task. For a session of small
+edits, change its `model:` line to `haiku` — `sovrium skills` keeps an edited file on
+refresh unless you pass `--force`.
 
 **If your client cannot run commands** (for example Claude Desktop connected through
 `sovrium mcp`, whose tools edit the config but serve no documentation), read the published
@@ -97,12 +111,14 @@ of Sovrium may describe an older one.
 - **The authoritative contract is the schema itself:** run `sovrium schema` to print the
   full JSON Schema (Draft 2020-12) for `app.yaml`. When unsure about a property or field type,
   consult the schema rather than guessing.
+- The app's architecture decisions live under `decisions:` in the config; read them before changing what they touch, and propose a new record for any choice a future operator would ask about.
 
 ## Commands
 
 ```bash
-sovrium start app.yaml         # Run the app (dev server)
-sovrium start app.yaml --watch # Hot-reload on config changes
+sovrium dev app.yaml           # Fresh seeded data, a printed sign-in, reload on save
+sovrium start app.yaml         # Run the app
+sovrium start app.yaml --watch # Run it supervised, reloading on config changes
 sovrium validate app.yaml      # Validate the config against the schema
 sovrium schema                 # Print the full JSON Schema for app.yaml
 sovrium build app.yaml         # Build static output
@@ -147,15 +163,17 @@ Every change is snapshotted first, so `undo` always has a way back.
 
 Validating is not verifying. After a config change, boot the app and drive it:
 
-- `sovrium start app.yaml --watch` serves the app at `http://localhost:3000` (override with
-  `PORT`) and hot-reloads on every save.
+- `sovrium dev app.yaml` serves the app on fresh seed data at the address it prints (by
+  default `http://localhost:3000`, override with `PORT`). When the app declares `auth`, it
+  prints an account to sign in with — `admin@<app name>.local` / `sovrium-dev-password`, or
+  set `SOVRIUM_DEV_PASSWORD` for another password. It reloads on every save.
 - Drive that running instance with Claude in Chrome — the `mcp__claude-in-chrome__*` tools.
   They are deferred: load them in one batched `ToolSearch`, call `tabs_context_mcp` first, open
   a **new** tab with `tabs_create_mcp`, and close what you opened.
 - **Exercise the workflow, not just the page.** Sign in, create a record, submit the form, let
   the automation fire — then check the **effect** (the row is there, the status changed), never
   just that something rendered.
-- Because `--watch` hot-reloads, the loop is: edit the config, re-navigate, re-verify. Repeat
+- Because `sovrium dev` reloads on save, the loop is: edit the config, re-navigate, re-verify. Repeat
   until the workflow passes.
 - Never trigger `alert()` / `confirm()` / `prompt()` — a JS dialog freezes the extension. If
   Chrome is not connected, or calls keep failing, say so and stop rather than reporting a
