@@ -8,10 +8,11 @@ a list of projects that each open in a side panel and on their own page.
 ## This app at a glance
 
 - **Tables** (8): projects, tasks, activity, clients, people, workspace_settings, reminders, bookings
-- **Pages** (25): eight sign-in pages, overview (`/`), metrics, worklist, five settings
+- **Pages** (24): seven sign-in pages, overview (`/`), metrics, worklist, five settings
   pages, projects, a project page and its edit page, and six `/kit/*` pages showing every
   other application block in its stock copy
-- **Library blocks** (60) — every application block: under `library/block/`, each starting with a
+- **Library blocks** (59) — every application block but the sign-up form, which an app that
+  admits people by invitation leaves out: under `library/block/`, each starting with a
   `sovrium-library:` line naming the entry and version it was installed from
 - **Forms** (5): the worklist's "New" dialog, the project page's "Add a task", and the
   drawer, modal and two-column forms the `/kit/data` page shows
@@ -292,3 +293,12 @@ in `app.yaml`.
   issues, and add to the one you find rather than opening a second.
 - **A vulnerability is never a public issue.** Run `sovrium report --security`, which prints
   the private advisory form, and write the report there.
+- **An idea is not a bug.** Run `sovrium report --feature config-option`, `engine-primitive`
+  or `recipe` for the form that fits; an engine primitive says why existing pieces cannot be composed.
+- **Choose the Domain and the Kind of bug.** Both are required choices on the form; check them on
+  the page, since an address cannot select them.
+- **Write the Agent brief.** Numbered Given / When / Then acceptance criteria, the verification
+  command, and what is out of scope.
+- **Submit through the form, in the browser.** Never create the issue with `gh issue create`, the
+  API or an MCP tool: it would arrive with no type and no labels. The `sovrium-report-issue` skill
+  has the details.

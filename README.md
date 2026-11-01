@@ -22,8 +22,8 @@ your own records:
 
 - **Every way in** — sign in with a password, an emailed link, a passkey or single sign-on;
   two-step verification, whose code is asked on its own page once the password is right;
-  sign up; reset a forgotten password; accept an invitation. Each alternative is drawn
-  only when `config/auth.yaml` turns it on.
+  reset a forgotten password; accept an invitation, the one way a new person joins. Each
+  alternative is drawn only when `config/auth.yaml` turns it on.
 - **Overview** (`/`) and **Metrics** — figures, a trend, a breakdown and the latest
   activity, all narrowed by one period selector.
 - **Worklist** — the active projects in tabs, with the figures that matter and a "New" dialog.
